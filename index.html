@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Clinica Vitale – Chat</title>
+
 		<link
 			href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
 			rel="stylesheet"
 		/>
-
 		<link
 			href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css"
 			rel="stylesheet"
@@ -18,17 +18,17 @@
 			/* ====== Tema Clínico – Vitale ====== */
 			:root {
 				/* Cores base */
-				--vitale-primary: #006993; /* azul principal */
-				--vitale-primary-600: #035a7b; /* hover */
-				--vitale-accent: #02a6a9; /* toque clínico/realce */
-				--vitale-bg: #f6f8fa; /* fundo claro */
-				--vitale-text: #1f2937; /* cinza-escuro legível */
-				--vitale-muted: #6b7280; /* secundário */
-				--vitale-success: #1f9d55; /* ok/checks */
+				--vitale-primary: #006993;
+				--vitale-primary-600: #035a7b;
+				--vitale-accent: #02a6a9;
+				--vitale-bg: #f6f8fa;
+				--vitale-text: #1f2937;
+				--vitale-muted: #6b7280;
+				--vitale-success: #1f9d55;
 
 				/* Bubbles */
-				--user-bubble-bg: #e8f2f7; /* bolha do utilizador */
-				--bot-bubble-bg: #ffffff; /* bolha do bot */
+				--user-bubble-bg: #e8f2f7;
+				--bot-bubble-bg: #ffffff;
 				--bubble-radius: 14px;
 
 				/* Borda/sombra */
@@ -44,6 +44,13 @@
 				--input-bg: #ffffff;
 				--input-border: #d1d5db;
 				--input-focus: var(--vitale-primary);
+			}
+
+			body {
+				height: 100%;
+				background: #334155;
+				margin: 8px 16px;
+				font-family: var(--chat-font);
 			}
 
 			/* ====== Container geral ====== */
@@ -73,7 +80,6 @@
 			.chat-heading {
 				padding: 0 !important;
 			}
-
 			.chat-header .title {
 				color: var(--vitale-primary);
 				font-weight: 600;
@@ -90,7 +96,7 @@
 				padding: 14px 14px 6px !important;
 			}
 
-			/* Bolhas do bot */
+			/* Bolhas */
 			.message.bot,
 			.message.assistant {
 				background: var(--bot-bubble-bg);
@@ -101,8 +107,6 @@
 				margin: 8px 0;
 				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 			}
-
-			/* Bolhas do utilizador */
 			.message.user {
 				background: var(--user-bubble-bg);
 				border: 1px solid #dbe7ee;
@@ -111,8 +115,6 @@
 				padding: 10px 12px;
 				margin: 8px 0;
 			}
-
-			/* Links e ênfases */
 			.message a {
 				color: var(--vitale-primary);
 				text-decoration: none;
@@ -122,6 +124,7 @@
 				color: var(--vitale-primary-600);
 			}
 
+			/* Inputs */
 			textarea,
 			.composer textarea,
 			.chat-textarea textarea {
@@ -139,7 +142,7 @@
 				box-shadow: 0 0 0 3px rgba(0, 105, 147, 0.12);
 			}
 
-			/* Botões principais */
+			/* Botões */
 			button,
 			.send-button,
 			.primary {
@@ -157,7 +160,7 @@
 				border-color: var(--vitale-primary-600) !important;
 			}
 
-			/* Welcome screen (Get Started) */
+			/* Welcome */
 			.welcome,
 			.get-started {
 				background: #ffffff;
@@ -166,7 +169,7 @@
 				padding: 18px;
 			}
 
-			/* Rodapé discreto */
+			/* Rodapé */
 			.chat-footer,
 			.footer {
 				color: var(--vitale-muted);
@@ -175,13 +178,13 @@
 				border-top: var(--frame-border);
 			}
 
-			/* Acessibilidade – foco nos botões */
+			/* Acessibilidade */
 			.chat-window button:focus-visible {
 				outline: 3px solid rgba(0, 105, 147, 0.35);
 				outline-offset: 2px;
 			}
 
-			/* Dark mode opcional (prefers-color-scheme) */
+			/* Dark mode */
 			@media (prefers-color-scheme: dark) {
 				:root {
 					--vitale-bg: #0b1220;
@@ -197,28 +200,309 @@
 					border-bottom: var(--frame-border);
 				}
 			}
-			/* Esconde o “Powered by n8n” em todas as vistas do widget */
-			.chat-powered-by {
+
+			/* Oculta "Powered by n8n" */
+			.chat-powered-by,
+			.chat-get-started-footer .chat-powered-by {
 				display: none !important;
 			}
 
-			/* Alguns builds mostram no ecrã de boas-vindas */
-			.chat-get-started-footer .chat-powered-by {
-				display: none !important;
+			/* ====== Nudge / Dica para abrir o chat ====== */
+			.chat-nudge {
+				position: fixed;
+				right: 92px; /* fica acima e à esquerda do botão rosa */
+				bottom: 92px;
+				background: #ffffff;
+				border: 1px solid #e5e7eb;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+				border-radius: 14px;
+				padding: 14px 16px;
+				max-width: 280px;
+				z-index: 2147483000; /* acima do widget */
+				display: flex;
+				align-items: flex-start;
+				gap: 10px;
+				animation: nudge-in 0.35s ease-out both;
+			}
+			@keyframes nudge-in {
+				from {
+					opacity: 0;
+					transform: translate3d(0, 8px, 0) scale(0.98);
+				}
+				to {
+					opacity: 1;
+					transform: translate3d(0, 0, 0) scale(1);
+				}
+			}
+			.chat-nudge .arrow {
+				position: absolute;
+				right: -10px;
+				bottom: 16px;
+				width: 22px;
+				height: 22px;
+				background: #fff;
+				border-right: 1px solid #e5e7eb;
+				border-bottom: 1px solid #e5e7eb;
+				transform: rotate(-45deg);
+				border-bottom-right-radius: 6px;
+			}
+			.nudge-title {
+				font-weight: 600;
+				font-size: 14px;
+				color: #0f2530;
+				margin-bottom: 4px;
+			}
+			.nudge-text {
+				font-size: 13px;
+				color: var(--vitale-muted);
+				line-height: 1.35;
+			}
+			.nudge-actions {
+				margin-top: 10px;
+				display: flex;
+				gap: 8px;
+				flex-wrap: wrap;
+			}
+			.nudge-actions .nudge-btn {
+				font-size: 12px;
+				padding: 8px 10px;
+				border-radius: 10px;
+				border: 1px solid var(--vitale-primary);
+				background: var(--vitale-primary);
+				color: #fff;
+				cursor: pointer;
+			}
+			.nudge-dismiss {
+				background: transparent;
+				color: var(--vitale-primary);
+				border-color: #d1e4ee;
+			}
+
+			/* Anel de pulso próximo ao botão rosa para chamar atenção */
+			.pulse {
+				position: fixed;
+				right: 20px;
+				bottom: 20px;
+				width: 56px;
+				height: 56px;
+				border-radius: 999px;
+				pointer-events: none;
+				box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+			}
+			.pulse::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				border: 3px solid rgba(236, 72, 153, 0.55); /* tom próximo ao rosa do botão */
+				animation: ring 1.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+			}
+			@keyframes ring {
+				0% {
+					transform: scale(0.85);
+					opacity: 0.8;
+				}
+				70% {
+					transform: scale(1.35);
+					opacity: 0;
+				}
+				100% {
+					transform: scale(1.35);
+					opacity: 0;
+				}
+			}
+
+			/* Em telas pequenas, deixar o nudge menor e um pouco mais alto */
+			@media (max-width: 640px) {
+				.chat-nudge {
+					right: 78px;
+					bottom: 88px;
+					max-width: 230px;
+				}
 			}
 		</style>
 	</head>
 	<body>
+		<!-- Seção de Instruções para Teste -->
+		<div
+			style="
+				max-width: 800px;
+				margin: 20px auto;
+				padding: 20px;
+				background: #f0f4f8;
+				border-left: 4px solid #006993;
+				border-radius: 8px;
+			"
+		>
+			<h2 style="color: #006993; margin-top: 0">
+				🧪 Ajude-nos a Melhorar o Assistente
+			</h2>
+			<p style="color: #1f2937; line-height: 1.6">
+				Estamos refinando a persona e o comportamento do nosso assistente
+				virtual. Sua interação é fundamental! Por favor, faça as seguintes
+				perguntas no chat e compartilhe suas considerações:
+			</p>
+
+			<div
+				style="
+					background: white;
+					padding: 15px;
+					border-radius: 6px;
+					margin: 15px 0;
+				"
+			>
+				<h3 style="color: #035a7b; margin-top: 0">
+					📋 Script de Perguntas-Teste
+				</h3>
+
+				<details style="margin: 10px 0; cursor: pointer">
+					<summary style="font-weight: 600; color: #006993">
+						1️⃣ Agendamento (Tarefa Primária)
+					</summary>
+					<ul style="margin-top: 10px; color: #1f2937">
+						<li>"Como faço para marcar uma consulta?"</li>
+						<li>
+							"Tenho dúvida sobre horários disponíveis para segunda-feira"
+						</li>
+						<li>"Preciso urgente de um atendimento hoje"</li>
+					</ul>
+				</details>
+
+				<details style="margin: 10px 0; cursor: pointer">
+					<summary style="font-weight: 600; color: #006993">
+						2️⃣ Informações Clínicas
+					</summary>
+					<ul style="margin-top: 10px; color: #1f2937">
+						<li>"Quais especialidades vocês têm?"</li>
+						<li>"Preciso de um dermatologista, qual o valor da consulta?"</li>
+						<li>"Como funciona a primeira consulta?"</li>
+					</ul>
+				</details>
+
+				<details style="margin: 10px 0; cursor: pointer">
+					<summary style="font-weight: 600; color: #006993">
+						3️⃣ Informações Práticas
+					</summary>
+					<ul style="margin-top: 10px; color: #1f2937">
+						<li>"Qual o endereço da clínica?"</li>
+						<li>"Quais são os horários de atendimento?"</li>
+						<li>"Vocês aceitam qual tipo de pagamento?"</li>
+					</ul>
+				</details>
+
+				<details style="margin: 10px 0; cursor: pointer">
+					<summary style="font-weight: 600; color: #006993">
+						4️⃣ Conversação Natural (Empatia)
+					</summary>
+					<ul style="margin-top: 10px; color: #1f2937">
+						<li>"Estou muito ansiosa com uma consulta marcada"</li>
+						<li>"Tive uma experiência ruim em outra clínica"</li>
+						<li>"Pode me recomendar um médico?"</li>
+					</ul>
+				</details>
+
+				<details style="margin: 10px 0; cursor: pointer">
+					<summary style="font-weight: 600; color: #006993">
+						5️⃣ Cenários Complexos (Edge Cases)
+					</summary>
+					<ul style="margin-top: 10px; color: #1f2937">
+						<li>"Preciso cancelar/reagendar uma consulta já marcada"</li>
+						<li>"Qual o status da minha consulta?"</li>
+						<li>"Tenho uma alergia a certos medicamentos, como informar?"</li>
+					</ul>
+				</details>
+			</div>
+
+			<div
+				style="
+					background: #e8f2f7;
+					padding: 15px;
+					border-radius: 6px;
+					margin: 15px 0;
+				"
+			>
+				<h3 style="color: #035a7b; margin-top: 0">📝 O que Avaliar</h3>
+				<ul style="color: #1f2937; margin: 0; padding-left: 20px">
+					<li><strong>Tom:</strong> É profissional mas acolhedor?</li>
+					<li>
+						<strong>Clareza:</strong> As respostas são diretas e compreensíveis?
+					</li>
+					<li><strong>Próximos Passos:</strong> O bot oferece ações claras?</li>
+					<li>
+						<strong>Empatia:</strong> Reconhece sentimentos e preocupações?
+					</li>
+					<li>
+						<strong>Limites:</strong> Sabe quando deve escalar para um humano?
+					</li>
+					<li>
+						<strong>Personalização:</strong> Adapta respostas ao contexto?
+					</li>
+				</ul>
+			</div>
+
+			<div
+				style="
+					background: #fff;
+					padding: 15px;
+					border: 1px solid #d1d5db;
+					border-radius: 6px;
+				"
+			>
+				<h3 style="color: #035a7b; margin-top: 0">💡 Como Contribuir</h3>
+				<ol
+					style="
+						color: #1f2937;
+						margin: 0;
+						padding-left: 20px;
+						line-height: 1.8;
+					"
+				>
+					<li>Abra o chat clicando no ícone rosa no canto inferior direito</li>
+					<li>Faça as perguntas acima (pode ser todas ou algumas)</li>
+					<li>Anote suas observações sobre tom, clareza e relevância</li>
+					<li>Compartilhe feedback: "O bot foi útil? Ficou algo faltando?"</li>
+					<li>Envie suas considerações para melhorias 📧</li>
+				</ol>
+			</div>
+
+			<p
+				style="
+					color: #6b7280;
+					font-size: 14px;
+					margin: 15px 0 0 0;
+					text-align: center;
+				"
+			>
+				✨ Seu feedback nos ajuda a criar um assistente mais humano, inteligente
+				e útil!
+			</p>
+		</div>
+
+		<!-- Elemento do widget -->
 		<div id="n8n-chat" aria-label="Assistente clínico Vitale"></div>
+
+		<!-- Nudge (chamado à ação) -->
+		<div class="chat-nudge" id="chatNudge" role="dialog" aria-live="polite">
+			<div>
+				<div class="nudge-title">Teste o assistente</div>
+				<div class="nudge-text">
+					Clique no ícone rosa no canto para abrir o chat. Se quiser, já pode
+					perguntar: <em>“Como marcar uma consulta?”</em>
+				</div>
+			</div>
+			<span class="arrow" aria-hidden="true"></span>
+		</div>
+
+		<!-- Pulso perto do botão do chat -->
+		<div class="pulse" id="chatPulse" aria-hidden="true"></div>
+
 		<script type="module">
 			import { createChat } from "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js";
-			createChat({
+
+			const chat = createChat({
 				webhookUrl:
 					"http://35.214.27.181:5678/webhook/bccee70b-3800-4ec6-8503-c73fca8366a9/chat",
-				webhookConfig: {
-					method: "POST",
-					headers: {},
-				},
+				webhookConfig: { method: "POST", headers: {} },
 				target: "#n8n-chat",
 				mode: "window",
 				chatInputKey: "chatInput",
@@ -228,11 +512,11 @@
 				showWelcomeScreen: true,
 				defaultLanguage: "pt",
 				initialMessages: [
-					"Sou o assitente da clinica Vitale, como posso ajudar-te?",
+					"Sou o assistente da Clínica Vitale, como posso ajudar-te?",
 				],
 				i18n: {
 					pt: {
-						title: "Clinica Vitale 👋",
+						title: "Clínica Vitale 👋",
 						subtitle: "",
 						footer: "Informação geral — não substitui aconselhamento médico.",
 						getStarted: "Nova conversa",
@@ -241,6 +525,68 @@
 				},
 				enableStreaming: false,
 			});
+
+			/* Utilidades do nudge */
+			const nudge = document.getElementById("chatNudge");
+			const pulse = document.getElementById("chatPulse");
+			const btnOpen = document.getElementById("openChatNow");
+			const btnDismiss = document.getElementById("dismissNudge");
+
+			// Tenta encontrar o botão flutuante do widget para "clicar" via JS
+			function clickLauncher() {
+				// Heurísticas para diferentes builds do n8n chat
+				const candidates = [
+					'button[aria-label*="open"]',
+					'button[aria-label*="Open"]',
+					'button[aria-label*="chat"]',
+					".n8n-chat-toggle",
+					".chat-toggle",
+					".n8n-chat .toggle",
+					".n8n-chat button",
+				];
+				for (const sel of candidates) {
+					const el = document.querySelector(sel);
+					if (el) {
+						el.click();
+						return true;
+					}
+				}
+				return false;
+			}
+
+			// Esconde nudge/pulse com animação simples
+			function hideNudge() {
+				if (!nudge) return;
+				nudge.style.opacity = "0";
+				nudge.style.transform = "translateY(4px)";
+				setTimeout(() => {
+					nudge.style.display = "none";
+				}, 250);
+				if (pulse) pulse.style.display = "none";
+			}
+
+			// Botões do nudge
+			btnOpen?.addEventListener("click", () => {
+				const opened = clickLauncher();
+				hideNudge();
+				// fallback: se não achou o botão, ainda assim some após clique
+				if (!opened)
+					console.warn("Launcher do chat não encontrado (ok, nudge ocultado).");
+			});
+			btnDismiss?.addEventListener("click", hideNudge);
+
+			// Auto-ocultar quando o chat abrir (observa elementos de janela)
+			const observer = new MutationObserver(() => {
+				const isOpen = document.querySelector(".n8n-chat-window, .chat-window");
+				if (isOpen) hideNudge();
+			});
+			observer.observe(document.documentElement, {
+				childList: true,
+				subtree: true,
+			});
+
+			// Auto-ocultar depois de 12s se o usuário ignorar
+			setTimeout(() => hideNudge(), 12000);
 		</script>
 	</body>
 </html>
